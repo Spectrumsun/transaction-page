@@ -1,7 +1,7 @@
-import type { Transaction, TransactionType } from '@/types/api'
+import type { Transaction, TransactionStatus, TransactionType } from '@/types/api'
+import { Badge } from '@/components/ui'
 import { Icon, type IconName, Money } from '@/components/ui'
-import { formatDateTime, TRANSACTION_TYPE_LABELS } from '@/lib/format'
-import { StatusDot } from './StatusDot'
+import { formatTime, TRANSACTION_TYPE_LABELS } from '@/lib/format'
 import styles from './TransactionRow.module.css'
 
 const TYPE_ICONS: Record<TransactionType, IconName> = {
@@ -14,7 +14,26 @@ const TYPE_ICONS: Record<TransactionType, IconName> = {
   bill_payment: 'receipt',
 }
 
+const STATUS_BADGE_TONE: Record<TransactionStatus, 'success' | 'warning' | 'danger'> = {
+  successful: 'success',
+  pending: 'warning',
+  failed: 'danger',
+}
+
+const STATUS_LABELS: Record<TransactionStatus, string> = {
+  successful: 'Successful',
+  pending: 'Pending',
+  failed: 'Failed',
+}
+
 const CREDIT_TYPES: TransactionType[] = ['deposit', 'transfer_in', 'conversion']
+
+function getInitials(name: string | null | undefined): string {
+  if (!name) return ''
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[1][0]).toUpperCase()
+}
 
 export interface TransactionRowProps {
   transaction: Transaction
@@ -26,14 +45,22 @@ export function TransactionRow({ transaction: tx, onSelect }: TransactionRowProp
 
   return (
     <button type="button" className={styles.row} onClick={() => onSelect?.(tx)}>
-      <span className={styles.icon}>
-        <Icon name={TYPE_ICONS[tx.type]} size={18} />
-      </span>
+      {tx.counterparty ? (
+        <span className={styles.avatar} aria-hidden>
+          {getInitials(tx.counterparty)}
+        </span>
+      ) : (
+        <span className={styles.icon}>
+          <Icon name={TYPE_ICONS[tx.type]} size={18} />
+        </span>
+      )}
       <span className={styles.main}>
         <span className={styles.title}>{TRANSACTION_TYPE_LABELS[tx.type]}</span>
-        <span className={styles.narration} dangerouslySetInnerHTML={{ __html: tx.narration }} />
+        <span className={styles.narration}>{tx.narration}</span>
       </span>
-      <StatusDot status={tx.status} />
+      <Badge tone={STATUS_BADGE_TONE[tx.status]} dot className={styles.badge}>
+        {STATUS_LABELS[tx.status]}
+      </Badge>
       <span className={styles.end}>
         <Money
           amount={tx.amount}
@@ -41,10 +68,7 @@ export function TransactionRow({ transaction: tx, onSelect }: TransactionRowProp
           sign={isCredit ? 'credit' : 'debit'}
           className={isCredit ? styles.credit : styles.amount}
         />
-        <span className={styles.meta}>
-          {formatDateTime(tx.createdAt)}
-          {tx.fee > 0 && ` · Fee ₦${tx.fee}`}
-        </span>
+        <span className={styles.meta}>{formatTime(tx.createdAt)}</span>
       </span>
     </button>
   )
