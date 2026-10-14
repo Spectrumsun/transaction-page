@@ -19,7 +19,10 @@ export function Money({ amount, currency, sign, className }: MoneyProps) {
     <span className={cx(styles.money, className)}>
       {prefix}
       {SYMBOLS[currency]}
-      {(amount / 100).toLocaleString()}
+      {(amount / 100).toLocaleString('en-NG', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
     </span>
   )
 }

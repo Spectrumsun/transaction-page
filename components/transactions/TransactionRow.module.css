@@ -30,6 +30,21 @@
   border-radius: var(--radius-full);
   background: var(--color-primary-soft);
   color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  flex-shrink: 0;
 }
 
 .main {
@@ -56,6 +71,11 @@
 .end {
   display: block;
   text-align: right;
+  min-width: 120px;
+}
+
+.badge {
+  flex-shrink: 0;
 }
 
 .amount,
@@ -74,4 +94,15 @@
   font-size: var(--text-xs);
   color: var(--color-text-subtle);
   white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .row {
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .end {
+    min-width: 0;
+  }
 }
