@@ -56,7 +56,7 @@ export function Select({
       document.removeEventListener('pointerdown', onPointer)
       document.removeEventListener('keydown', onKey)
     }
-  }, [open ])
+  }, [open])
 
   const pick = (next: string) => {
     if (value === undefined) setInternal(next)
@@ -89,7 +89,11 @@ export function Select({
                 <li key={option.value || '__all'} role="option" aria-selected={isSelected}>
                   <button
                     type="button"
-                    className={cx(styles.option, isAll && styles.allOption, isSelected && !isAll && styles.selected)}
+                    className={cx(
+                      styles.option,
+                      isAll && styles.allOption,
+                      isSelected && !isAll && styles.selected
+                    )}
                     onClick={() => pick(option.value)}
                   >
                     {option.label}

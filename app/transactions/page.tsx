@@ -5,7 +5,13 @@ import { CURRENCIES } from '@/types/api'
 import { Button, CardHeader, Drawer, Icon, Input, Money, Select, Badge } from '@/components/ui'
 import { TransactionRow } from '@/components/transactions'
 import { getTransaction, getTransactions } from '@/lib/api/endpoints'
-import { formatDate, formatDateTime, TRANSACTION_STATUS_LABELS, TRANSACTION_TYPE_LABELS, formatMoney } from '@/lib/format'
+import {
+  formatDate,
+  formatDateTime,
+  TRANSACTION_STATUS_LABELS,
+  TRANSACTION_TYPE_LABELS,
+  formatMoney,
+} from '@/lib/format'
 import styles from './page.module.css'
 
 const TRANSACTION_TYPE_OPTIONS = [
@@ -187,7 +193,11 @@ export default function TransactionsPage() {
           to: toArg || undefined,
         })
         if (requestId.current !== id) return
-        const body = res as unknown as { data?: Transaction[]; meta?: Pagination; error?: { message: string } }
+        const body = res as unknown as {
+          data?: Transaction[]
+          meta?: Pagination
+          error?: { message: string }
+        }
         if (!body.data || body.error) {
           throw new Error(body.error?.message ?? 'Something went wrong. Please try again.')
         }
@@ -230,14 +240,11 @@ export default function TransactionsPage() {
     }
   }, [])
 
-  const openDetail = useCallback(
-    (tx: Transaction) => {
-      setSelected(tx)
-      setSelectedId(tx.id)
-      setDetailNotFound(false)
-    },
-    []
-  )
+  const openDetail = useCallback((tx: Transaction) => {
+    setSelected(tx)
+    setSelectedId(tx.id)
+    setDetailNotFound(false)
+  }, [])
 
   const closeDetail = useCallback(() => {
     setSelected(null)
@@ -462,7 +469,10 @@ export default function TransactionsPage() {
         </div>
       ) : (
         <>
-          <div className={`${styles.table} ${isRefreshing ? styles.refreshing : ''}`} aria-busy={isRefreshing}>
+          <div
+            className={`${styles.table} ${isRefreshing ? styles.refreshing : ''}`}
+            aria-busy={isRefreshing}
+          >
             {groupTransactions(transactions).map((group) => (
               <div key={group.items[0]?.id ?? group.label} className={styles.group}>
                 <h3 className={styles.groupTitle}>{group.label}</h3>
@@ -560,33 +570,33 @@ export default function TransactionsPage() {
             </div>
             <h3 className={styles.sectionLabel}>Details</h3>
             <dl className={styles.details}>
-            <dt>ID</dt>
-            <dd>{selected.id}</dd>
-            <dt>Reference</dt>
-            <dd>{selected.reference}</dd>
-            <dt>Type</dt>
-            <dd>{TRANSACTION_TYPE_LABELS[selected.type]}</dd>
-            <dt>Status</dt>
-            <dd>
-              <Badge tone={STATUS_BADGE_TONE[selected.status]}>
-                {TRANSACTION_STATUS_LABELS[selected.status]}
-              </Badge>
-            </dd>
-            <dt>Currency</dt>
-            <dd>{selected.currency}</dd>
-            <dt>Amount</dt>
-            <dd>
-              <Money amount={selected.amount} currency={selected.currency} />
-            </dd>
-            <dt>Fee</dt>
-            <dd>{selected.fee > 0 ? formatMoney(selected.fee, selected.currency) : '—'}</dd>
-            <dt>Narration</dt>
-            <dd>{selected.narration}</dd>
-            <dt>Counterparty</dt>
-            <dd>{selected.counterparty ?? '—'}</dd>
-            <dt>Date</dt>
-            <dd>{formatDateTime(selected.createdAt)}</dd>
-          </dl>
+              <dt>ID</dt>
+              <dd>{selected.id}</dd>
+              <dt>Reference</dt>
+              <dd>{selected.reference}</dd>
+              <dt>Type</dt>
+              <dd>{TRANSACTION_TYPE_LABELS[selected.type]}</dd>
+              <dt>Status</dt>
+              <dd>
+                <Badge tone={STATUS_BADGE_TONE[selected.status]}>
+                  {TRANSACTION_STATUS_LABELS[selected.status]}
+                </Badge>
+              </dd>
+              <dt>Currency</dt>
+              <dd>{selected.currency}</dd>
+              <dt>Amount</dt>
+              <dd>
+                <Money amount={selected.amount} currency={selected.currency} />
+              </dd>
+              <dt>Fee</dt>
+              <dd>{selected.fee > 0 ? formatMoney(selected.fee, selected.currency) : '—'}</dd>
+              <dt>Narration</dt>
+              <dd>{selected.narration}</dd>
+              <dt>Counterparty</dt>
+              <dd>{selected.counterparty ?? '—'}</dd>
+              <dt>Date</dt>
+              <dd>{formatDateTime(selected.createdAt)}</dd>
+            </dl>
           </>
         ) : null}
       </Drawer>
